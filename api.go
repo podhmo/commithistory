@@ -2,6 +2,8 @@ package commithistory
 
 import (
 	"io"
+
+	"github.com/podhmo/commithistory/file"
 )
 
 // Parsable :
@@ -16,7 +18,7 @@ type Unparsable interface {
 
 // LoadFile :
 func LoadFile(filename string, ob Parsable, match func(record []string) bool) error {
-	f, err := loadFile(filename, ob.Parse)
+	f, err := file.LoadFile(filename, ob.Parse)
 	if err != nil {
 		return err
 	}
@@ -25,5 +27,5 @@ func LoadFile(filename string, ob Parsable, match func(record []string) bool) er
 
 // SaveFile :
 func SaveFile(filename string, ob Unparsable) error {
-	return saveFile(filename, ob.Unparse)
+	return file.SaveFile(filename, ob.Unparse)
 }

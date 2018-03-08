@@ -1,4 +1,4 @@
-package commithistory
+package file
 
 import (
 	"io"
@@ -9,8 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// saveFile :
-func saveFile(filename string, write func(w io.Writer) error) (rerr error) {
+// SaveFile :
+func SaveFile(filename string, write func(w io.Writer) error) (rerr error) {
 	fp, err := ioutil.TempFile(".", "ch")
 	if err != nil {
 		return errors.Wrap(err, "save, create tempfile")
