@@ -16,8 +16,9 @@ type Commit struct {
 	Action    string
 }
 
-func (c *Commit) match(alias string, i int) func(record []string) bool {
-	return MatchByIndex(alias, i)
+// Match :
+func (c *Commit) Match(record []string, alias string) bool {
+	return record[1] == alias
 }
 
 // Parse :

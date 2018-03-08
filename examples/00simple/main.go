@@ -26,7 +26,7 @@ func run() error {
 		return err
 	}
 	var ob2 commithistory.Commit
-	if err := commithistory.LoadFile(filename, &ob2, commithistory.MatchByIndex("head", 1)); err != nil {
+	if err := commithistory.LoadFile(filename, &ob2, "head"); err != nil {
 		return err
 	}
 	pp.Println(ob2)

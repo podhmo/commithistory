@@ -9,6 +9,7 @@ import (
 // Parsable :
 type Parsable interface {
 	Parse(record []string) error
+	Match(record []string, alias string) bool
 }
 
 // Unparsable :
@@ -17,12 +18,13 @@ type Unparsable interface {
 }
 
 // LoadFile :
-func LoadFile(filename string, ob Parsable, match func(record []string) bool) error {
-	f, err := file.LoadFile(filename, ob.Parse)
+func LoadFile(filename string, ob Parsable, alias string) error {
+	f, err := file.LoadFile(filename, ob.Parse, ob.Match)
 	if err != nil {
 		return err
 	}
-	return f.Find(match)
+	defer f.Close()
+	return f.Find(alias)
 }
 
 // SaveFile :
