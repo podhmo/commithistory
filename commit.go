@@ -11,8 +11,8 @@ import (
 // Commit :
 type Commit struct {
 	ID        string
+	Alias     string `key:"true"`
 	CreatedAt time.Time
-	Alias     string
 	Action    string
 }
 
