@@ -38,3 +38,8 @@ func (c *Config) SaveCommit(filename string, ob history.Unparsable) error {
 	path := filepath.Join(dirpath, filename)
 	return history.SaveFile(path, ob)
 }
+
+// IsNotFound :
+func (c *Config) IsNotFound(err error) bool {
+	return history.IsNotFound(err)
+}
