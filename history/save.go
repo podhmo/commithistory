@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-
 // saveFile :
 func saveFile(filename string, write func(w io.Writer) error) (rerr error) {
 	fp, err := ioutil.TempFile(".", "ch")
@@ -26,6 +25,7 @@ func saveFile(filename string, write func(w io.Writer) error) (rerr error) {
 	if err := write(fp); err != nil {
 		return err
 	}
+	log.Printf("save. %q\n", filename)
 	rp, err := os.Open(filename)
 	if err != nil {
 		finfo, serr := os.Stat(filename)

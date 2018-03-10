@@ -3,6 +3,7 @@ package history
 import (
 	"encoding/csv"
 	"io"
+	"log"
 	"os"
 
 	"github.com/pkg/errors"
@@ -18,6 +19,7 @@ type Finder struct {
 
 // loadFile :
 func loadFile(filename string, parse func([]string) error, match func([]string, string) bool) (*Finder, error) {
+	log.Printf("load. %q\n", filename)
 	fp, err := os.Open(filename)
 	if err != nil {
 		if _, err := os.Stat(filename); err != nil {
