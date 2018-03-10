@@ -1,4 +1,4 @@
-package file
+package history
 
 import (
 	"encoding/csv"
@@ -16,8 +16,8 @@ type Finder struct {
 	Close func() error
 }
 
-// LoadFile :
-func LoadFile(filename string, parse func([]string) error, match func([]string, string) bool) (*Finder, error) {
+// loadFile :
+func loadFile(filename string, parse func([]string) error, match func([]string, string) bool) (*Finder, error) {
 	fp, err := os.Open(filename)
 	if err != nil {
 		return nil, errors.Wrap(err, "open")

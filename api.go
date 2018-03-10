@@ -1,33 +1,41 @@
 package commithistory
 
 import (
-	"io"
+	"path/filepath"
 
-	"github.com/podhmo/commithistory/file"
+	"github.com/podhmo/commithistory/config"
+	"github.com/podhmo/commithistory/history"
 )
 
-// Parsable :
-type Parsable interface {
-	Parse(record []string) error
-	Match(record []string, alias string) bool
+// todo: --profile
+
+// Config :
+type Config struct {
+	*config.Config
+	HistoryFile string
 }
 
-// Unparsable :
-type Unparsable interface {
-	Unparse(w io.Writer) error
+// New :
+func New(name string, filename string) *Config {
+	return &Config{Config: config.New(name), HistoryFile: filename}
 }
 
-// LoadFile :
-func LoadFile(filename string, ob Parsable, alias string) error {
-	f, err := file.LoadFile(filename, ob.Parse, ob.Match)
+// LoadCommit :
+func (c *Config) LoadCommit(alias string, ob history.Parsable) error {
+	dirpath, err := c.Dir(c.Name)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	return f.Find(alias)
+	path := filepath.Join(dirpath, c.HistoryFile)
+	return history.LoadFile(path, ob, alias)
 }
 
-// SaveFile :
-func SaveFile(filename string, ob Unparsable) error {
-	return file.SaveFile(filename, ob.Unparse)
+// SaveCommit :
+func (c *Config) SaveCommit(ob history.Unparsable) error {
+	dirpath, err := c.Dir(c.Name)
+	if err != nil {
+		return err
+	}
+	path := filepath.Join(dirpath, c.HistoryFile)
+	return history.SaveFile(path, ob)
 }
