@@ -1,13 +1,9 @@
 package commithistory
 
 import (
-	"path/filepath"
-
 	"github.com/podhmo/commithistory/config"
 	"github.com/podhmo/commithistory/history"
 )
-
-// todo: --profile
 
 // Config :
 type Config struct {
@@ -15,8 +11,29 @@ type Config struct {
 }
 
 // New :
-func New(name string) *Config {
-	return &Config{Config: config.New(name)}
+func New(name string, ops ...func(*Config)) *Config {
+	c := &Config{Config: config.New(name)}
+	for _, op := range ops {
+		op(c)
+	}
+	return c
+}
+
+// WithProfile :
+func WithProfile(profile string) func(*Config) {
+	return func(c *Config) {
+		c.Config.Profile = profile
+	}
+}
+
+// Load :
+func (c *Config) Load(name string, ob interface{}) error {
+	return c.Config.Load(name, ob)
+}
+
+// Save :
+func (c *Config) Save(name string, ob interface{}) error {
+	return c.Config.Save(name, ob)
 }
 
 // LoadCommit :
@@ -25,7 +42,7 @@ func (c *Config) LoadCommit(filename, alias string, ob history.Parsable) error {
 	if err != nil {
 		return err
 	}
-	path := filepath.Join(dirpath, filename)
+	path := c.JoinPath(c.Profile, dirpath, filename)
 	return history.LoadFile(path, ob, alias)
 }
 
@@ -35,7 +52,7 @@ func (c *Config) SaveCommit(filename string, ob history.Unparsable) error {
 	if err != nil {
 		return err
 	}
-	path := filepath.Join(dirpath, filename)
+	path := c.JoinPath(c.Profile, dirpath, filename)
 	return history.SaveFile(path, ob)
 }
 

@@ -11,10 +11,12 @@ import (
 
 // Config :
 type Config struct {
-	Name    string
-	M       MarshalUnmarshaller
-	Default func(path string) error
-	Dir     func(name string) (string, error)
+	Name     string
+	Profile  string // optional
+	M        MarshalUnmarshaller
+	JoinPath func(profile string, paths ...string) string
+	Default  func(path string) error
+	Dir      func(name string) (string, error)
 }
 
 // New :
@@ -29,11 +31,21 @@ func New(name string, ops ...func(*Config)) *Config {
 	if c.Default == nil {
 		c.Default = DefaultWriteFile
 	}
+	if c.JoinPath == nil {
+		c.JoinPath = DefaultJoinPath
+	}
 	if c.M == nil {
 		M := &JSONModule{}
 		c.M = M
 	}
 	return c
+}
+
+// WithProfile :
+func WithProfile(profile string) func(*Config) {
+	return func(c *Config) {
+		c.Profile = profile
+	}
 }
 
 // WithMarshalUnmarshaller :
@@ -55,6 +67,15 @@ func WithDefaultFunction(writefile func(path string) error) func(*Config) {
 	return func(c *Config) {
 		c.Default = writefile
 	}
+}
+
+// DefaultJoinPath :
+func DefaultJoinPath(profile string, paths ...string) string {
+	if profile == "" {
+		return filepath.Join(paths...)
+	}
+	paths[len(paths)-1] = fmt.Sprintf("%s.%s", profile, paths[len(paths)-1])
+	return filepath.Join(paths...)
 }
 
 // DefaultWriteFile :
@@ -85,7 +106,7 @@ func (c *Config) Load(name string, ob interface{}) error {
 		return err
 	}
 
-	path := filepath.Join(d, name)
+	path := c.JoinPath(c.Profile, d, name)
 	log.Printf("load. %q\n", path)
 
 	var fp io.ReadCloser
@@ -114,7 +135,7 @@ func (c *Config) Save(name string, ob interface{}) error {
 		return err
 	}
 
-	path := filepath.Join(d, name)
+	path := c.JoinPath(c.Profile, d, name)
 	log.Printf("save. %q\n", path)
 
 	if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
