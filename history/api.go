@@ -1,6 +1,10 @@
 package history
 
-import "io"
+import (
+	"io"
+
+	"github.com/pkg/errors"
+)
 
 // Parsable :
 type Parsable interface {
@@ -26,4 +30,9 @@ func LoadFile(filename string, ob Parsable, alias string) error {
 // SaveFile :
 func SaveFile(filename string, ob Unparsable) error {
 	return saveFile(filename, ob.Unparse)
+}
+
+// IsNotFound :
+func IsNotFound(err error) bool {
+	return errors.Cause(err) == io.EOF
 }

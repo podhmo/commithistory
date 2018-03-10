@@ -20,6 +20,9 @@ type Finder struct {
 func loadFile(filename string, parse func([]string) error, match func([]string, string) bool) (*Finder, error) {
 	fp, err := os.Open(filename)
 	if err != nil {
+		if _, err := os.Stat(filename); err != nil {
+			return nil, io.EOF
+		}
 		return nil, errors.Wrap(err, "open")
 	}
 	f := &Finder{r: csv.NewReader(fp), Close: fp.Close, Parse: parse, Match: match}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/k0kubun/pp"
 	"github.com/podhmo/commithistory"
+	"github.com/podhmo/commithistory/history"
 )
 
 func main() {
@@ -22,11 +23,11 @@ func run() error {
 		Action:    "create",
 	}
 	filename := "./history.csv"
-	if err := commithistory.SaveFile(filename, &ob); err != nil {
+	if err := history.SaveFile(filename, &ob); err != nil {
 		return err
 	}
 	var ob2 commithistory.Commit
-	if err := commithistory.LoadFile(filename, &ob2, "head"); err != nil {
+	if err := history.LoadFile(filename, &ob2, "head"); err != nil {
 		return err
 	}
 	pp.Println(ob2)
